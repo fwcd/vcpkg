@@ -19,7 +19,7 @@ jobs:
           - os: macos-10.15
             vcpkg_path: /Users/runner/mixxx-vcpkg
             vcpkg_bootstrap: ./bootstrap-vcpkg.sh
-            vcpkg_triplet: x64-osx-min1012
+            vcpkg_triplet: arm64-osx-min1100
             vcpkg_host_triplet: x64-osx-min1012
             vcpkg_overlay_ports: overlay/osx:overlay/ports
             vcpkg_packages_extras: qt5-macextras
@@ -69,7 +69,8 @@ jobs:
       VCPKG_OVERLAY_TRIPLETS: ${{ matrix.vcpkg_path }}/overlay/triplets
       VCPKG_OVERLAY_PORTS: ${{ matrix.vcpkg_overlay_ports }}
       DEPS_BASE_NAME: mixxx-deps
-      DEVELOPER_DIR: /Applications/Xcode_12.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_12.2.app/Contents/Developer
+      SDKROOT: /Applications/Xcode_12.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk
       MIXXX_VERSION: 2.4
     name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -92,7 +93,7 @@ jobs:
       if: runner.os == 'macOS'
       run: |
           brew update && brew install nasm automake
-          /bin/bash -c "sudo xcode-select --switch /Applications/Xcode_12.app/Contents/Developer"
+          /bin/bash -c "sudo xcode-select --switch /Applications/Xcode_12.2.app/Contents/Developer"
           xcrun --show-sdk-version
     - name: Set up cache
       uses: actions/cache@v2
