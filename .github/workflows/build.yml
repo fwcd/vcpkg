@@ -22,7 +22,7 @@ jobs:
             vcpkg_triplet: arm64-osx-min1100
             vcpkg_host_triplet: x64-osx-min1012
             vcpkg_overlay_ports: overlay/osx:overlay/ports
-            vcpkg_packages_extras: qt5-macextras
+            vcpkg_packages_extras: qt5-macextras qt5-host-tools:x64-osx-min1012
             vcpkg_cache: /Users/runner/.cache/vcpkg/archives
             check_disk_space: df -h
     env:
