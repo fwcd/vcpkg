@@ -456,6 +456,10 @@ if (VCPKG_TARGET_IS_OSX)
     set(OPTIONS "${OPTIONS} --disable-vdpau") # disable vdpau in OSX
 endif()
 
+if(VCPKG_TARGET_IS_IOS)
+    set(OPTIONS "${OPTIONS} --disable-audiotoolbox") # disable AudioToolbox on iOS
+endif()
+
 set(OPTIONS_CROSS " --enable-cross-compile")
 
 if(VCPKG_TARGET_ARCHITECTURE STREQUAL "x64")
