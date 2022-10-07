@@ -1,13 +1,14 @@
 #Every update requires an update of these hashes and the version within the control file of each of the 32 ports. 
 #So it is probably better to have a central location for these hashes and let the ports update via a script
 set(QT_MAJOR_MINOR_VER 5.12)
-set(QT_PATCH_VER 4)
+set(QT_PATCH_VER 12)
 
 set(QT_PORT_LIST base 3d activeqt charts connectivity datavis3d declarative gamepad graphicaleffects imageformats location macextras mqtt multimedia networkauth
                  purchasing quickcontrols quickcontrols2 remoteobjects script scxml sensors serialport speech svg tools translations virtualkeyboard webchannel websockets
                  webview winextras xmlpatterns)
 
-#set(_VCPKG_INTERNAL_NO_HASH_CHECK 1)
+# TODO: Update the hashes for 5.12.12 (currently they are for 5.12.4)
+set(_VCPKG_INTERNAL_NO_HASH_CHECK 1)
 set(QT_HASH_qt5-base                28b029a0d3621477f625d474b8bc38ddcc7173df6adb274b438e290b6c50bd0891e5b62c04b566a281781acee3a353a6a3b0bc88228e996994f92900448d7946)
 set(QT_HASH_qt5-3d                  aa93d3661d092dc020e7903242964b7daba1e42882deb0d5fd45abff3c11e971f49a497ae5a1b7420fd497e6986daca4da0a217c94821ef8432cc3d8c617d291)
 set(QT_HASH_qt5-activeqt            1a1560424ed8f6075ffe371efaff63ae9aa52377aa84f806a39d7e995960a7d7eeb1eb575470b13569293d2623c5e247204397d8b6698c1ce2ff9f206850a912)
