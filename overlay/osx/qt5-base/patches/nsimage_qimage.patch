@@ -1,4 +1,4 @@
-From c1bf37971f3aef7b1da1027665ea7c06fc343718 Mon Sep 17 00:00:00 2001
+From 1e6e666827d1c38d6dde82ee3a7ea081dec92975 Mon Sep 17 00:00:00 2001
 From: fwcd <fwcdmail@gmail.com>
 Date: Mon, 10 Jan 2022 19:55:42 +0100
 Subject: [PATCH] macOS: Streamline QImage to NSImage conversion
@@ -17,7 +17,7 @@ Co-authored-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
  6 files changed, 40 insertions(+), 31 deletions(-)
 
 diff --git a/src/gui/painting/qcoregraphics.mm b/src/gui/painting/qcoregraphics.mm
-index e2497eaadb..b5620535fb 100644
+index e2497eaadbc..b5620535fbe 100644
 --- a/src/gui/painting/qcoregraphics.mm
 +++ b/src/gui/painting/qcoregraphics.mm
 @@ -47,6 +47,8 @@
@@ -79,7 +79,7 @@ index e2497eaadb..b5620535fb 100644
  NSImage *qt_mac_create_nsimage(const QIcon &icon, int defaultSize)
  {
 diff --git a/src/gui/painting/qcoregraphics_p.h b/src/gui/painting/qcoregraphics_p.h
-index ba2cde8325..e1697b0f38 100644
+index ba2cde8325f..e1697b0f385 100644
 --- a/src/gui/painting/qcoregraphics_p.h
 +++ b/src/gui/painting/qcoregraphics_p.h
 @@ -69,9 +69,15 @@ QT_BEGIN_NAMESPACE
@@ -100,10 +100,10 @@ index ba2cde8325..e1697b0f38 100644
  Q_GUI_EXPORT CGImageRef qt_mac_toCGImage(const QImage &qImage);
  Q_GUI_EXPORT CGImageRef qt_mac_toCGImageMask(const QImage &qImage);
 diff --git a/src/plugins/platforms/cocoa/qcocoacursor.mm b/src/plugins/platforms/cocoa/qcocoacursor.mm
-index e0d623fc4c..658a7670f0 100644
+index 87a57c78c80..20131dd9752 100644
 --- a/src/plugins/platforms/cocoa/qcocoacursor.mm
 +++ b/src/plugins/platforms/cocoa/qcocoacursor.mm
-@@ -340,19 +340,12 @@ NSCursor *QCocoaCursor::createCursorFromPixmap(const QPixmap pixmap, const QPoin
+@@ -315,19 +315,12 @@ NSCursor *QCocoaCursor::createCursorFromPixmap(const QPixmap pixmap, const QPoin
          QSize layoutSize = pixmap.size() / pixmap.devicePixelRatio();
          QPixmap scaledPixmap = pixmap.scaled(layoutSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
          scaledPixmap.setDevicePixelRatio(1.0);
@@ -127,10 +127,10 @@ index e0d623fc4c..658a7670f0 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/cocoa/qcocoaintegration.mm b/src/plugins/platforms/cocoa/qcocoaintegration.mm
-index 61308d6bf9..1e578e5052 100644
+index 1eed6b55824..1ae5461d0e1 100644
 --- a/src/plugins/platforms/cocoa/qcocoaintegration.mm
 +++ b/src/plugins/platforms/cocoa/qcocoaintegration.mm
-@@ -476,10 +476,9 @@ void QCocoaIntegration::setApplicationIcon(const QIcon &icon) const
+@@ -563,10 +563,9 @@ void QCocoaIntegration::setApplicationIcon(const QIcon &icon) const
      if (!icon.isNull()) {
          NSSize size = [[[NSApplication sharedApplication] dockTile] size];
          QPixmap pixmap = icon.pixmap(size.width, size.height);
@@ -143,12 +143,12 @@ index 61308d6bf9..1e578e5052 100644
  
  void QCocoaIntegration::beep() const
 diff --git a/src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm b/src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm
-index 559188aa5f..d8caf92a5c 100644
+index ed26d3afeab..fd6713e93a4 100644
 --- a/src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm
 +++ b/src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm
 @@ -228,10 +228,9 @@ void QCocoaSystemTrayIcon::updateIcon(const QIcon &icon)
-         p.drawPixmap(r, pixmap);
      }
+     fullHeightPixmap.setDevicePixelRatio(devicePixelRatio);
  
 -    NSImage *nsimage = static_cast<NSImage *>(qt_mac_create_nsimage(fullHeightPixmap));
 +    auto *nsimage = [NSImage imageFromQImage:fullHeightPixmap.toImage()];
@@ -159,10 +159,10 @@ index 559188aa5f..d8caf92a5c 100644
  
  void QCocoaSystemTrayIcon::updateMenu(QPlatformMenu *menu)
 diff --git a/src/plugins/platforms/cocoa/qcocoawindow.mm b/src/plugins/platforms/cocoa/qcocoawindow.mm
-index 2fbaec2c56..6ba0cee310 100644
+index 2a23bf286f5..5889622939a 100644
 --- a/src/plugins/platforms/cocoa/qcocoawindow.mm
 +++ b/src/plugins/platforms/cocoa/qcocoawindow.mm
-@@ -899,8 +899,7 @@ void QCocoaWindow::setWindowIcon(const QIcon &icon)
+@@ -882,8 +882,7 @@ void QCocoaWindow::setWindowIcon(const QIcon &icon)
          [iconButton setImage:[workspace iconForFile:m_view.window.representedFilename]];
      } else {
          QPixmap pixmap = icon.pixmap(QSize(22, 22));
@@ -173,5 +173,5 @@ index 2fbaec2c56..6ba0cee310 100644
  }
  
 -- 
-2.34.0
+2.35.1
 

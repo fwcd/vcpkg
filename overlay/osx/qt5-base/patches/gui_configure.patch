@@ -1,6 +1,6 @@
 diff --git a/src/gui/configure.json b/src/gui/configure.json
-index c51e3ceee..7f7e206b6 100644
---- a/src/gui/configure.json	
+index 6dd6f5b16c8..80b200e3c2a 100644
+--- a/src/gui/configure.json
 +++ b/src/gui/configure.json
 @@ -239,9 +239,9 @@
              "headers": "ft2build.h",
@@ -14,3 +14,6 @@ index c51e3ceee..7f7e206b6 100644
              ],
              "use": [
                  { "lib": "zlib", "condition": "features.system-zlib" }
+-- 
+2.35.1
+

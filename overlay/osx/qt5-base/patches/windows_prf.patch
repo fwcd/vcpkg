@@ -1,5 +1,5 @@
 diff --git a/mkspecs/features/win32/windows.prf b/mkspecs/features/win32/windows.prf
-index 272170d4..70b8ea2e 100644
+index 272170d4280..70b8ea2eb7f 100644
 --- a/mkspecs/features/win32/windows.prf
 +++ b/mkspecs/features/win32/windows.prf
 @@ -6,7 +6,7 @@ contains(TEMPLATE, ".*app") {
@@ -11,3 +11,6 @@ index 272170d4..70b8ea2e 100644
              PRE_TARGETDEPS += $$lib
              QMAKE_LIBS += $$lib
          } else {
+-- 
+2.35.1
+

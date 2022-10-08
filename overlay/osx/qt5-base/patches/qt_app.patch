@@ -1,9 +1,8 @@
 diff --git a/mkspecs/features/qt_app.prf b/mkspecs/features/qt_app.prf
-index 8354f30e..8f24b72e 100644
+index 8354f30eea2..b6f6ceaf449 100644
 --- a/mkspecs/features/qt_app.prf
 +++ b/mkspecs/features/qt_app.prf
-@@ -27,10 +27,11 @@ host_build:force_bootstrap {
-         QT -= core core-private xml
+@@ -28,9 +28,10 @@ host_build:force_bootstrap {
          QT += bootstrap-private
      }
      target.path = $$[QT_HOST_BINS]
@@ -15,3 +14,6 @@ index 8354f30e..8f24b72e 100644
      CONFIG += relative_qt_rpath  # Qt's tools and apps should be relocatable
  }
  INSTALLS += target
+-- 
+2.35.1
+

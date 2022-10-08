@@ -1,5 +1,5 @@
 diff --git a/src/winmain/winmain.pro b/src/winmain/winmain.pro
-index 9cb6ab0c..52c7876e 100644
+index 9cb6ab0c596..52c7876e684 100644
 --- a/src/winmain/winmain.pro
 +++ b/src/winmain/winmain.pro
 @@ -3,7 +3,7 @@
@@ -25,3 +25,6 @@ index 9cb6ab0c..52c7876e 100644
  TARGET = $$qtLibraryTarget($$TARGET$$QT_LIBINFIX) #do this towards the end
  
  load(qt_targets)
+-- 
+2.35.1
+

@@ -1,7 +1,7 @@
-From c220a61c0324ef32e85523494d09edc6be54ceff Mon Sep 17 00:00:00 2001
+From 883c07860ae26bfbbd601630af078498f008b749 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Daniel=20Sch=C3=BCrmann?= <daschuer@mixxx.org>
 Date: Mon, 3 Jan 2022 10:23:23 +0100
-Subject: [PATCH]  QCocoaDrag - avoid using the deprecated API if possible
+Subject: [PATCH] QCocoaDrag - avoid using the deprecated API if possible
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -27,12 +27,12 @@ Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
 Reviewed-by: Timur Pocheptsov <timur.pocheptsov@qt.io>
 ---
  src/plugins/platforms/cocoa/qcocoadrag.h      |   6 +
- src/plugins/platforms/cocoa/qcocoadrag.mm     | 105 ++++++++++++++++--
+ src/plugins/platforms/cocoa/qcocoadrag.mm     | 103 ++++++++++++++++--
  .../platforms/cocoa/qnsview_dragging.mm       |  14 ++-
- 3 files changed, 112 insertions(+), 13 deletions(-)
+ 3 files changed, 111 insertions(+), 12 deletions(-)
 
 diff --git a/src/plugins/platforms/cocoa/qcocoadrag.h b/src/plugins/platforms/cocoa/qcocoadrag.h
-index 5a5b985c..975741c2 100644
+index 5a5b985c6e0..975741c270f 100644
 --- a/src/plugins/platforms/cocoa/qcocoadrag.h
 +++ b/src/plugins/platforms/cocoa/qcocoadrag.h
 @@ -48,6 +48,8 @@
@@ -61,7 +61,7 @@ index 5a5b985c..975741c2 100644
      QPixmap dragPixmap(QDrag *drag, QPoint &hotSpot) const;
  };
 diff --git a/src/plugins/platforms/cocoa/qcocoadrag.mm b/src/plugins/platforms/cocoa/qcocoadrag.mm
-index 09433194..ab6863a4 100644
+index 09433194a63..37fefc84819 100644
 --- a/src/plugins/platforms/cocoa/qcocoadrag.mm
 +++ b/src/plugins/platforms/cocoa/qcocoadrag.mm
 @@ -44,6 +44,9 @@
@@ -102,8 +102,7 @@ index 09433194..ab6863a4 100644
 +    CGFloat flippedY = dragImage.size.height - hotSpot.y();
      event_location.y -= flippedY;
      NSSize mouseOffset_unused = NSMakeSize(0.0, 0.0);
--    NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-+    NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+     NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
  
 -    [theWindow dragImage:nsimage
 +    [theWindow dragImage:dragImage
@@ -213,7 +212,7 @@ index 09433194..ab6863a4 100644
  {
      const QMimeData* data = drag->mimeData();
 diff --git a/src/plugins/platforms/cocoa/qnsview_dragging.mm b/src/plugins/platforms/cocoa/qnsview_dragging.mm
-index 37e972db..978d73f7 100644
+index 37e972dba9e..978d73f7d9f 100644
 --- a/src/plugins/platforms/cocoa/qnsview_dragging.mm
 +++ b/src/plugins/platforms/cocoa/qnsview_dragging.mm
 @@ -39,7 +39,7 @@
@@ -274,5 +273,5 @@ index 37e972db..978d73f7 100644
  
      // Qt starts drag-and-drop on a mouse button press event. Cococa in
 -- 
-2.25.1
+2.35.1
 
