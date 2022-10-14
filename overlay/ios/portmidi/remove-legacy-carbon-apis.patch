@@ -1,0 +1,66 @@
+diff --git a/src/portmidi/mac/readbinaryplist.c b/src/portmidi/mac/readbinaryplist.c
+index bccd095..ac1523d 100644
+--- a/src/portmidi/mac/readbinaryplist.c
++++ b/src/portmidi/mac/readbinaryplist.c
+@@ -75,10 +75,10 @@ memory requested or calls longjmp, so callers don't have to check.
+ #include <stdlib.h>
+ #include <string.h>
+ #include <assert.h>
++#include <setjmp.h>
+ #include <stdio.h>
+ #include <sys/stat.h>
+ #include "readbinaryplist.h"
+-#include <Carbon/Carbon.h>
+ 
+ #define NO 0
+ #define YES 1
+@@ -204,7 +204,6 @@ typedef struct bplist_info
+ 
+ 
+ static value_ptr bplist_read_pldata(pldata_ptr data);
+-static value_ptr bplist_read_pref(char *filename, OSType folder_type);
+ static uint64_t read_sized_int(bplist_info_ptr bplist, uint64_t offset, uint8_t size);
+ static uint64_t read_offset(bplist_info_ptr bplist, uint64_t index);
+ static BOOL read_self_sized_int(bplist_info_ptr bplist, uint64_t offset, uint64_t *outValue, size_t *outSize);
+@@ -378,38 +377,6 @@ value_ptr bplist_read_file(char *filename)
+ }
+ 
+ 
+-value_ptr bplist_read_pref(char *filename, OSType folder_type)
+-{
+-    FSRef prefdir;
+-    char cstr[MAXPATHLEN];
+-
+-    OSErr err = FSFindFolder(kOnAppropriateDisk, folder_type,
+-                             FALSE, &prefdir);
+-    if (err) {
+-        bplist_log("Error finding preferences folder: %d\n", err);
+-        return NULL;
+-    }
+-    err = FSRefMakePath(&prefdir, (UInt8 *) cstr, (UInt32) (MAXPATHLEN - 1));
+-    if (err) {
+-        bplist_log("Error making path name for preferences folder: %d\n", err);
+-        return NULL;
+-    }
+-    strlcat(cstr, "/", MAXPATHLEN);
+-    strlcat(cstr, filename, MAXPATHLEN);
+-    return bplist_read_file(cstr);
+-}
+-
+-
+-value_ptr bplist_read_system_pref(char *filename) {
+-    return bplist_read_pref(filename, kSystemPreferencesFolderType);
+-}
+-
+-
+-value_ptr bplist_read_user_pref(char *filename) {
+-    return bplist_read_pref(filename, kPreferencesFolderType);
+-}
+-
+-
+ // data is stored with high-order bytes first.
+ // read from plist data in a machine-independent fashion
+ //
+-- 
+2.35.1
+
