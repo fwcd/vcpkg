@@ -97,7 +97,11 @@ else()
     endif()
 
     if(NOT VCPKG_TARGET_IS_MINGW)
-        string(APPEND OPTIONS --with-pic=yes)
+        list(APPEND OPTIONS --with-pic=yes)
+    endif()
+
+    if(VCPKG_TARGET_IS_IOS)
+        list(APPEND OPTIONS --disable-frontend)
     endif()
 
     vcpkg_configure_make(
