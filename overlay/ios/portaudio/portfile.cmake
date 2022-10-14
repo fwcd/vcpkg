@@ -6,6 +6,7 @@ vcpkg_from_github(
     HEAD_REF jack_windows
     PATCHES
         "add-basic-support-for-ios.patch"
+        "update-cmakelists-for-ios.patch"
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
@@ -13,10 +14,6 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     asio ASIO
     jack JACK
 )
-
-if(VCPKG_TARGET_IS_IOS)
-    set(OPTIONS -DPA_USE_COREAUDIO_IOS=ON)
-endif()
 
 vcpkg_cmake_configure(
     SOURCE_PATH ${SOURCE_PATH}
