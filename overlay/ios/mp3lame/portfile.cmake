@@ -106,8 +106,7 @@ else()
 
     vcpkg_configure_make(
         SOURCE_PATH ${SOURCE_PATH}
-        # FIXME: Don't hardcode this, use DETERMINE_BUILD_TRIPLET instead (which doesn't work currently)
-        BUILD_TRIPLET "--host=arm --build=arm-apple-darwin20"
+        DETERMINE_BUILD_TRIPLET
         OPTIONS ${OPTIONS}
     )
 
