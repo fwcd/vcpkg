@@ -34,6 +34,8 @@ function(find_qt_mkspec TARGET_PLATFORM_MKSPEC_OUT HOST_PLATFORM_MKSPEC_OUT EXT_
             else()
                 set(_tmp_targ_out "linux-g++")    
             endif()
+        elseif(VCPKG_TARGET_IS_IOS)
+            set(_tmp_targ_out "macx-ios-clang")
         elseif(VCPKG_TARGET_IS_OSX)
             if("${VCPKG_TARGET_ARCHITECTURE}" MATCHES "arm64")
                 set(_tmp_targ_out "macx-aarch64-clang") # switch to macx-g++ since vcpkg requires g++ to compile any way? 
