@@ -8,6 +8,10 @@ vcpkg_from_github(
     HEAD_REF main
     PATCHES
         "remove-legacy-carbon-apis.patch"
+        "pt-remove-coreaudio-hosttime-dependency.patch"
+        "pt-use-standard-uint64.patch"
+        "pm-remove-coreaudio-hosttime-dependency.patch"
+        "pm-use-corefoundation-endian-utils.patch"
 )
 
 vcpkg_cmake_configure(SOURCE_PATH "${SOURCE_PATH}")

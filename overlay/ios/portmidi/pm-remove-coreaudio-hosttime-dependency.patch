@@ -1,0 +1,135 @@
+diff --git a/src/portmidi/mac/pmmacosxcm.c b/src/portmidi/mac/pmmacosxcm.c
+index a8b92c6..eb37c72 100755
+--- a/src/portmidi/mac/pmmacosxcm.c
++++ b/src/portmidi/mac/pmmacosxcm.c
+@@ -35,9 +35,9 @@
+ #include <stdio.h>
+ #include <string.h>
+ 
++#include <mach/mach_time.h>
+ #include <CoreServices/CoreServices.h>
+ #include <CoreMIDI/MIDIServices.h>
+-#include <CoreAudio/HostTime.h>
+ #include <unistd.h>
+ 
+ #define PACKET_BUFFER_SIZE 1024
+@@ -115,6 +115,8 @@ typedef struct midi_macosxcm_struct {
+ } midi_macosxcm_node, *midi_macosxcm_type;
+ 
+ /* private function declarations */
++uint64_t nanos_to_absolute_time(uint64_t nanos);
++uint64_t absolute_time_to_nanos(uint64_t absolute_time);
+ MIDITimeStamp timestamp_pm_to_cm(PmTimestamp timestamp);
+ PmTimestamp timestamp_cm_to_pm(MIDITimeStamp timestamp);
+ 
+@@ -145,7 +147,7 @@ static PmTimestamp midi_synchronize(PmInternal *midi)
+ {
+     midi_macosxcm_type m = (midi_macosxcm_type) midi->descriptor;
+     UInt64 pm_stream_time_2 = 
+-            AudioConvertHostTimeToNanos(AudioGetCurrentHostTime());
++            absolute_time_to_nanos(mach_absolute_time());
+     PmTimestamp real_time;
+     UInt64 pm_stream_time;
+     /* if latency is zero and this is an output, there is no 
+@@ -156,7 +158,7 @@ static PmTimestamp midi_synchronize(PmInternal *midi)
+          /* read real_time between two reads of stream time */
+          pm_stream_time = pm_stream_time_2;
+          real_time = (*midi->time_proc)(midi->time_info);
+-         pm_stream_time_2 = AudioConvertHostTimeToNanos(AudioGetCurrentHostTime());
++         pm_stream_time_2 = absolute_time_to_nanos(mach_absolute_time());
+          /* repeat if more than 0.5 ms has elapsed */
+     } while (pm_stream_time_2 > pm_stream_time + 500000);
+     m->delta = pm_stream_time - ((UInt64) real_time * (UInt64) 1000000);
+@@ -291,7 +293,7 @@ readProc(const MIDIPacketList *newPackets, void *refCon, void *connRefCon)
+     for (packetIndex = 0; packetIndex < newPackets->numPackets; packetIndex++) {
+         /* Set the timestamp and dispatch this message */
+         event.timestamp = (PmTimestamp) /* explicit conversion */ (
+-                (AudioConvertHostTimeToNanos(packet->timeStamp) - m->delta) / 
++                (absolute_time_to_nanos(packet->timeStamp) - m->delta) / 
+                 (UInt64) 1000000);
+         status = packet->data[0];
+         /* process packet as sysex data if it begins with MIDI_SYSEX, or
+@@ -407,6 +409,9 @@ midi_in_close(PmInternal *midi)
+ static PmError
+ midi_out_open(PmInternal *midi, void *driverInfo)
+ {
++    mach_timebase_info_data_t clock_timebase;
++    mach_timebase_info(&clock_timebase);
++
+     midi_macosxcm_type m;
+ 
+     m = (midi_macosxcm_type) pm_alloc(sizeof(midi_macosxcm_node)); /* create */
+@@ -429,7 +434,7 @@ midi_out_open(PmInternal *midi, void *driverInfo)
+     m->last_msg_length = 0;
+     m->min_next_time = 0;
+     m->byte_count = 0;
+-    m->us_per_host_tick = 1000000.0 / AudioGetHostClockFrequency();
++    m->us_per_host_tick = clock_timebase.numer / (clock_timebase.denom * 1000.0);
+     m->host_ticks_per_byte = (UInt64) (1000000.0 / 
+                                        (m->us_per_host_tick * MAX_BYTES_PER_S));
+     return pmNoError;
+@@ -479,7 +484,7 @@ midi_write_flush(PmInternal *midi, PmTimestamp timestamp)
+         /* out of space, send the buffer and start refilling it */
+         /* before we can send, maybe delay to limit data rate. OS X allows
+          * 15KB/s. */
+-        UInt64 now = AudioGetCurrentHostTime();
++        UInt64 now = mach_absolute_time();
+         if (now < m->min_next_time) {
+             usleep((useconds_t) 
+                    ((m->min_next_time - now) * m->us_per_host_tick));
+@@ -559,7 +564,7 @@ midi_write_short(PmInternal *midi, PmEvent *event)
+     /* if latency == 0, midi->now is not valid. We will just set it to zero */
+     if (midi->latency == 0) when = 0;
+     when_ns = ((UInt64) (when + midi->latency) * (UInt64) 1000000) + m->delta;
+-    timestamp = (MIDITimeStamp) AudioConvertNanosToHostTime(when_ns);
++    timestamp = (MIDITimeStamp) nanos_to_absolute_time(when_ns);
+ 
+     message[0] = Pm_MessageStatus(what);
+     message[1] = Pm_MessageData1(what);
+@@ -593,7 +598,7 @@ midi_begin_sysex(PmInternal *midi, PmTimestamp when)
+     /* if latency == 0, midi->now is not valid. We will just set it to zero */
+     if (midi->latency == 0) when = 0;
+     when_ns = ((UInt64) (when + midi->latency) * (UInt64) 1000000) + m->delta;
+-    m->sysex_timestamp = (MIDITimeStamp) AudioConvertNanosToHostTime(when_ns);
++    m->sysex_timestamp = (MIDITimeStamp) nanos_to_absolute_time(when_ns);
+ 
+     if (m->packet == NULL) {
+         m->packet = MIDIPacketListInit(m->packetList);
+@@ -683,6 +688,17 @@ static void midi_get_host_error(PmInternal *midi, char *msg, unsigned int len)
+     }
+ }
+ 
++uint64_t nanos_to_absolute_time(uint64_t nanos) {
++    mach_timebase_info_data_t clock_timebase;
++    mach_timebase_info(&clock_timebase);
++    return (nanos * clock_timebase.denom) / clock_timebase.numer;
++}
++
++uint64_t absolute_time_to_nanos(uint64_t absolute_time) {
++    mach_timebase_info_data_t clock_timebase;
++    mach_timebase_info(&clock_timebase);
++    return (absolute_time * clock_timebase.numer) / clock_timebase.denom;
++}
+ 
+ MIDITimeStamp timestamp_pm_to_cm(PmTimestamp timestamp)
+ {
+@@ -691,14 +707,14 @@ MIDITimeStamp timestamp_pm_to_cm(PmTimestamp timestamp)
+         return (MIDITimeStamp)0;
+     } else {
+         nanos = (UInt64)timestamp * (UInt64)1000000;
+-        return (MIDITimeStamp)AudioConvertNanosToHostTime(nanos);
++        return (MIDITimeStamp)nanos_to_absolute_time(nanos);
+     }
+ }
+ 
+ PmTimestamp timestamp_cm_to_pm(MIDITimeStamp timestamp)
+ {
+     UInt64 nanos;
+-    nanos = AudioConvertHostTimeToNanos(timestamp);
++    nanos = absolute_time_to_nanos(timestamp);
+     return (PmTimestamp)(nanos / (UInt64)1000000);
+ }
+ 
+-- 
+2.35.1
+

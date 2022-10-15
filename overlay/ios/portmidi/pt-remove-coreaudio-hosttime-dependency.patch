@@ -1,0 +1,59 @@
+diff --git a/src/porttime/ptmacosx_mach.c b/src/porttime/ptmacosx_mach.c
+index 753f583..f932abf 100755
+--- a/src/porttime/ptmacosx_mach.c
++++ b/src/porttime/ptmacosx_mach.c
+@@ -2,7 +2,6 @@
+ 
+ #include <stdlib.h>
+ #include <stdio.h>
+-#include <CoreAudio/HostTime.h>
+ 
+ #import <mach/mach.h>
+ #import <mach/mach_error.h>
+@@ -56,6 +55,8 @@ static void *Pt_CallbackProc(void *p)
+         mach_error("Couldn't set thread precedence policy", error);
+     }
+     
++    mach_timebase_info_data_t clock_timebase;
++    mach_timebase_info(&clock_timebase);
+     
+     /* to kill a process, just increment the pt_callback_proc_id */
+     /* printf("pt_callback_proc_id %d, id %d\n", pt_callback_proc_id, parameters->id); */
+@@ -65,8 +66,8 @@ static void *Pt_CallbackProc(void *p)
+         int delay = mytime++ * parameters->resolution - Pt_Time();
+ 	PtTimestamp timestamp;
+         if (delay < 0) delay = 0;
+-        wait_time = AudioConvertNanosToHostTime((UInt64)delay * NSEC_PER_MSEC);
+-        wait_time += AudioGetCurrentHostTime();
++        wait_time = (delay * NSEC_PER_MSEC * clock_timebase.denom) / clock_timebase.numer;
++        wait_time += mach_absolute_time();
+         error = mach_wait_until(wait_time);
+ 	timestamp = Pt_Time();
+         (*(parameters->callback))(timestamp, parameters->userData);
+@@ -79,7 +80,7 @@ static void *Pt_CallbackProc(void *p)
+ PtError Pt_Start(int resolution, PtCallback *callback, void *userData)
+ {
+     if (time_started_flag) return ptAlreadyStarted;
+-    start_time = AudioGetCurrentHostTime();
++    start_time = mach_absolute_time();
+     
+     if (callback) {
+         int res;
+@@ -118,9 +119,12 @@ int Pt_Started()
+ 
+ PtTimestamp Pt_Time()
+ {
++    mach_timebase_info_data_t clock_timebase;
++    mach_timebase_info(&clock_timebase);
++
+     UInt64 clock_time, nsec_time;
+-    clock_time = AudioGetCurrentHostTime() - start_time;
+-    nsec_time = AudioConvertHostTimeToNanos(clock_time);
++    clock_time = mach_absolute_time() - start_time;
++    nsec_time = (clock_time * clock_timebase.numer) / clock_timebase.denom;
+     return (PtTimestamp)(nsec_time / NSEC_PER_MSEC);
+ }
+ 
+-- 
+2.35.1
+
