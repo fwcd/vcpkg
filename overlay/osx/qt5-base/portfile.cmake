@@ -37,6 +37,7 @@ qt_download_submodule(  OUT_SOURCE_PATH SOURCE_PATH
                             patches/arm64_qiosurfacegraphicsbuffer.patch   # allow to build on arm64
                             patches/arm64_qcocoahelper.patch   # alow to build on arm64 
                             patches/arm64_send_super_stret.patch     # don't use qt_msgSendSuper_stret on arm64 
+                            patches/ios_disable_bitcode_flags.patch # the dependencies are built without bitcode, so Qt shouldn't embed such either (otherwise we get linker errors)
                     )
 
 # Remove vendored dependencies to ensure they are not picked up by the build
