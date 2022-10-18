@@ -6,6 +6,9 @@ vcpkg_from_github(
         HEAD_REF default
 )
 
+include(${CMAKE_CURRENT_LIST_DIR}/../../ios/scripts/ios_sdkroot.cmake)
+ios_set_sdkroot()
+
 vcpkg_configure_meson(
         SOURCE_PATH "${SOURCE_PATH}"
         OPTIONS
@@ -46,3 +49,5 @@ file(
         DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
         RENAME copyright
 )
+
+ios_restore_sdkroot()
