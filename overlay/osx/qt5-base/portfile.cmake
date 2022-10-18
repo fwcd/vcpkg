@@ -78,7 +78,7 @@ list(APPEND CORE_OPTIONS
     -system-doubleconversion
     -system-sqlite)
     
-if(VCPKG_TARGET_IS_OSX)
+if(VCPKG_TARGET_IS_OSX OR VCPKG_TARGET_IS_IOS)
     list(APPEND CORE_OPTIONS -qt-harfbuzz)
 else()
     file(REMOVE_RECURSE ${SOURCE_PATH}/src/3rdparty/harfbuzz-ng)
