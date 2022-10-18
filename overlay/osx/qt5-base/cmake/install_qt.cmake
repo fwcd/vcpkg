@@ -71,13 +71,14 @@ function(install_qt)
         set(_build_type_${_buildname} "release")
     endif()
     unset(_buildname)
+
     
     foreach(_buildname ${BUILDTYPES})
         set(_build_triplet ${TARGET_TRIPLET}-${_short_name_${_buildname}})
         
         vcpkg_add_to_path(PREPEND "${CURRENT_INSTALLED_DIR}${_path_suffix_${_buildname}}/bin")
 
-        if(VCPKG_TARGET_IS_OSX)
+        if(VCPKG_TARGET_IS_OSX OR VCPKG_TARGET_IS_IOS)
            # For some reason there will be an error on MacOSX without this clean!
             message(STATUS "Cleaning before build ${_build_triplet}")
             vcpkg_execute_required_process(
@@ -94,7 +95,7 @@ function(install_qt)
             LOGNAME build-${_build_triplet}
         )
         
-        if(VCPKG_TARGET_IS_OSX)
+        if(VCPKG_TARGET_IS_OSX OR VCPKG_TARGET_IS_IOS)
            # For some reason there will be an error on MacOSX without this clean!
             message(STATUS "Cleaning after build before install ${_build_triplet}")
             vcpkg_execute_required_process(
