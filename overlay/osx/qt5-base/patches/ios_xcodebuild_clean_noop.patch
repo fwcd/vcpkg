@@ -1,0 +1,26 @@
+diff --git a/mkspecs/features/uikit/xcodebuild.mk b/mkspecs/features/uikit/xcodebuild.mk
+index 7c45d68e..28c85a59 100644
+--- a/mkspecs/features/uikit/xcodebuild.mk
++++ b/mkspecs/features/uikit/xcodebuild.mk
+@@ -19,7 +19,7 @@ all: build_all
+ 
+ # Top level targets
+ build: build_first
+-clean: clean_first
++clean:
+ install: install_first
+ check: check_first
+ distclean: clean_all
+@@ -34,8 +34,7 @@ $(EXPORT_SUBTARGETS): % : %-build
+ %-build: ACTION = build
+ %-build: xcodebuild-% ;
+ 
+-%-clean: ACTION = clean
+-%-clean: xcodebuild-% ;
++%-clean:
+ 
+ %-install: ACTION = install
+ %-install: xcodebuild-% ;
+-- 
+2.35.1
+
