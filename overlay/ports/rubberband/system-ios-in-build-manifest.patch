@@ -1,0 +1,34 @@
+diff --git a/meson.build b/meson.build
+index 42f7f7f..ac53ef5 100644
+--- a/meson.build
++++ b/meson.build
+@@ -147,7 +147,7 @@ ipp_path = get_option('ipp_path')
+ ipp_needed = false
+ 
+ if fft == 'auto'
+-  if system == 'darwin'
++  if system == 'darwin' or system == 'ios'
+     fft = 'vdsp'
+   else
+     fft = 'builtin'
+@@ -344,7 +344,7 @@ else
+   config_summary += { 'Build type': 'Debug' }
+ endif
+ 
+-if system == 'darwin'
++if system == 'darwin' or system == 'ios'
+   feature_defines += ['-DUSE_PTHREADS', '-DMALLOC_IS_ALIGNED']
+   ladspa_symbol_args += [
+     '-exported_symbols_list', meson.current_source_dir() / 'ladspa-lv2/ladspa-plugin.list'
+@@ -785,7 +785,7 @@ summary(config_summary + { 'Architecture': architecture },
+         section: 'Configuration', bool_yn: true)
+ summary(target_summary, section: 'Build targets', bool_yn: true)
+ 
+-if system == 'darwin'
++if system == 'darwin' or system == 'ios'
+   foreach arg: get_option('cpp_args')
+     if arg.contains('iPhone')
+       summary({'Please note': 'You cannot legally distribute the Rubber Band Library\n             in an iOS app on the App Store, unless you have first obtained a\n             commercial licence.'}, section: '***')
+-- 
+2.35.1
+

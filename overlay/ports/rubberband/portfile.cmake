@@ -4,6 +4,8 @@ vcpkg_from_github(
         REF v3.0.0
         SHA512 384985e58a3fc5d9646428678ee6bcef2d232abed6d86b623302a78a4bf6e59e2fd5f5939e28bb988e82aa6f424fd1510e8e014a4ad1c96efe0010b61651a133
         HEAD_REF default
+        PATCHES
+            system-ios-in-build-manifest.patch
 )
 
 include(${CMAKE_CURRENT_LIST_DIR}/../../ios/scripts/ios_sdkroot.cmake)
