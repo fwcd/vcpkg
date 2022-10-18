@@ -78,7 +78,7 @@ function(install_qt)
         
         vcpkg_add_to_path(PREPEND "${CURRENT_INSTALLED_DIR}${_path_suffix_${_buildname}}/bin")
 
-        if(VCPKG_TARGET_IS_OSX OR VCPKG_TARGET_IS_IOS)
+        if(VCPKG_TARGET_IS_OSX)
            # For some reason there will be an error on MacOSX without this clean!
             message(STATUS "Cleaning before build ${_build_triplet}")
             vcpkg_execute_required_process(
