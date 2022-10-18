@@ -39,6 +39,7 @@ qt_download_submodule(  OUT_SOURCE_PATH SOURCE_PATH
                             patches/arm64_send_super_stret.patch     # don't use qt_msgSendSuper_stret on arm64 
                             patches/replace_result_of.patch # Replace usage of std::result_of with decltype
                             patches/ios_disable_bitcode_flags.patch # the dependencies are built without bitcode, so Qt shouldn't embed such either (otherwise we get linker errors)
+                            patches/ios_generic_simulator_destination.patch # the generic destination seems to set an empty id, therefore we force the generic simulator destination
                     )
 
 # Remove vendored dependencies to ensure they are not picked up by the build
