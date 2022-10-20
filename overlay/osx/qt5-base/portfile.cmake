@@ -40,6 +40,7 @@ qt_download_submodule(  OUT_SOURCE_PATH SOURCE_PATH
                             patches/ios_disable_bitcode_flags.patch # the dependencies are built without bitcode, so Qt shouldn't embed such either (otherwise we get linker errors)
                             patches/ios_generic_simulator_destination.patch # the generic destination seems to set an empty id, therefore we force the generic simulator destination
                             patches/ios_xcodebuild_clean_noop.patch # the xcodebuild clean fails for some reason, therefore we skip it for now
+                            patches/darwin_empty_library_suffix.patch # omit '_debug' suffix for built libraries since Qt5CoreConfig otherwise cannot find them (we already move them under a debug/ subdir)
                     )
 
 # Remove vendored dependencies to ensure they are not picked up by the build

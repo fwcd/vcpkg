@@ -1,0 +1,15 @@
+diff --git a/mkspecs/features/qt_functions.prf b/mkspecs/features/qt_functions.prf
+index 1903e509..92c06df1 100644
+--- a/mkspecs/features/qt_functions.prf
++++ b/mkspecs/features/qt_functions.prf
+@@ -3,7 +3,6 @@ defineReplace(qtPlatformTargetSuffix) {
+     suffix =
+     CONFIG(debug, debug|release) {
+         !debug_and_release|build_pass {
+-            mac: return($${suffix}_debug)
+             win32: return($${suffix}d)
+         }
+     }
+-- 
+2.35.1
+
