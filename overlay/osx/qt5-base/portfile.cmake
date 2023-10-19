@@ -40,6 +40,7 @@ qt_download_submodule(  OUT_SOURCE_PATH SOURCE_PATH
                             patches/replace_result_of.patch # Replace usage of std::result_of with decltype
                             patches/scrollbars_style.patch # Never handle scrollbars styled with box or border changes as transient
                             patches/qmake_xcode15.patch # Fix Xcode 15 (macOS 14 Sonoma) build, see https://github.com/Homebrew/homebrew-core/pull/145729
+                            patches/configure_libdl.patch # Fix Xcode 15 (macOS 14 Sonoma) build, see https://github.com/mixxxdj/vcpkg/pull/87
                     )
 
 # Remove vendored dependencies to ensure they are not picked up by the build

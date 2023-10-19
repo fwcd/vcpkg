@@ -1,0 +1,26 @@
+diff --git a/configure.json b/configure.json
+index 72792594..37b46616 100644
+--- a/configure.json
++++ b/configure.json
+@@ -203,6 +203,21 @@
+                 { "type": "pkgConfig", "args": "libudev" },
+                 "-ludev"
+             ]
++        },
++        "libdl": {
++            "label": "dlopen()",
++            "test": {
++                "main": [
++                    "dlclose(dlopen(0, 0));",
++                    "dlsym(RTLD_DEFAULT, 0);",
++                    "dlerror();"
++                ]
++            },
++            "headers": "dlfcn.h",
++            "sources": [
++                "",
++                "-ldl"
++            ]
+         }
+     },
+ 
