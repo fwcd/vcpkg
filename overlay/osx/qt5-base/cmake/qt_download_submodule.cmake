@@ -4,12 +4,12 @@ function(qt_get_submodule_name OUT_NAME)
 endfunction()
 
 function(qt_download_submodule)
-    cmake_parse_arguments(_csc "" "OUT_SOURCE_PATH" "PATCHES" ${ARGN})
-    
+    cmake_parse_arguments(_csc "" "OUT_SOURCE_PATH" "PATCHES;BUILD_OPTIONS;BUILD_OPTIONS_RELEASE;BUILD_OPTIONS_DEBUG" ${ARGN})
+
     if(NOT DEFINED _csc_OUT_SOURCE_PATH)
         message(FATAL_ERROR "qt_download_module requires parameter OUT_SOURCE_PATH to be set! Please correct the portfile!")
     endif()
-    
+
     vcpkg_buildpath_length_warning(37)
     qt_get_submodule_name(NAME)
 
@@ -21,12 +21,19 @@ function(qt_download_submodule)
         FILENAME ${ARCHIVE_NAME}
         SHA512 ${QT_HASH_${PORT}}
     )
-    vcpkg_extract_source_archive_ex(
-        OUT_SOURCE_PATH SOURCE_PATH
-        ARCHIVE "${ARCHIVE_FILE}"
-        REF ${FULL_VERSION}
-        PATCHES ${_csc_PATCHES}
-    )
 
-    set(${_csc_OUT_SOURCE_PATH} ${SOURCE_PATH} PARENT_SCOPE)
+    if(QT_UPDATE_VERSION)
+        file(SHA512 "${ARCHIVE_FILE}" ARCHIVE_HASH)
+        message(STATUS "${PORT} new hash is ${ARCHIVE_HASH}")
+        file(APPEND "${VCPKG_ROOT_DIR}/ports/qt5-base/cmake/qt_new_hashes.cmake" "set(QT_HASH_${PORT} ${ARCHIVE_HASH})\n")
+    else()
+        vcpkg_extract_source_archive_ex(
+            OUT_SOURCE_PATH SOURCE_PATH
+            ARCHIVE "${ARCHIVE_FILE}"
+            REF ${FULL_VERSION}
+            PATCHES ${_csc_PATCHES}
+        )
+    endif()
+
+    set(${_csc_OUT_SOURCE_PATH} "${SOURCE_PATH}" PARENT_SCOPE)
 endfunction()
