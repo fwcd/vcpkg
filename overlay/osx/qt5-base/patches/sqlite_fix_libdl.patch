@@ -1,0 +1,34 @@
+From eea3947842e461662cea4a31c7a5dd7f1969ec23 Mon Sep 17 00:00:00 2001
+From: Nils Jeisecke <nils.jeisecke@saltation.com>
+Date: Sat, 6 Oct 2018 07:37:27 +0200
+Subject: [PATCH] sqlite: Remove SQLITE_OMIT_LOAD_EXTENSION define
+
+This define prevents the usage of some customization possibilities, e.g.
+injecting data by using virtual tables that are implemented as an
+extension.
+
+[ChangeLog][Third-Party Code] Build sqlite without SQLITE_OMIT_LOAD_EXTENSION
+
+Fixes: QTBUG-70972
+Change-Id: Idaf1c2c7bccbaec6f7bbf3d79334ffb4a0bad3fc
+Reviewed-by: Nils Jeisecke <nils.jeisecke@saltation.com>
+Reviewed-by: Simon Hausmann <simon.hausmann@qt.io>
+---
+ src/3rdparty/sqlite.pri | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/3rdparty/sqlite.pri b/src/3rdparty/sqlite.pri
+index 068764c726..6405beb3d0 100644
+--- a/src/3rdparty/sqlite.pri
++++ b/src/3rdparty/sqlite.pri
+@@ -8,6 +9,7 @@ winrt {
+ }
+ qnx: DEFINES += _QNX_SOURCE
+ !win32:!winrt:!winphone: DEFINES += HAVE_USLEEP=1
++qtConfig(dlopen): QMAKE_USE += libdl
+ integrity: QMAKE_CFLAGS += -include qplatformdefs.h
+ INCLUDEPATH +=  $$PWD/sqlite
+ SOURCES +=      $$PWD/sqlite/sqlite3.c
+-- 
+2.42.0
+

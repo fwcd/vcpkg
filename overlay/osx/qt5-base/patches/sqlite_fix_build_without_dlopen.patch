@@ -1,0 +1,32 @@
+From c00487d588f9ae45d8a477a1c436fde69feca782 Mon Sep 17 00:00:00 2001
+From: Tasuku Suzuki <tasuku.suzuki@qbc.io>
+Date: Fri, 5 Jul 2019 07:52:08 +0900
+Subject: [PATCH] Fix build without features.dlopen
+
+Change-Id: I4ad24c241d3c32a5658bf71fa6133181793020d3
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+---
+ src/3rdparty/sqlite.pri | 6 +++++-
+ src/gui/configure.json  | 4 ++--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/src/3rdparty/sqlite.pri b/src/3rdparty/sqlite.pri
+index 6405beb3d0..cc8c12a6da 100644
+--- a/src/3rdparty/sqlite.pri
++++ b/src/3rdparty/sqlite.pri
+@@ -9,7 +9,11 @@ winrt {
+ }
+ qnx: DEFINES += _QNX_SOURCE
+ !win32:!winrt:!winphone: DEFINES += HAVE_USLEEP=1
+-qtConfig(dlopen): QMAKE_USE += libdl
++qtConfig(dlopen) {
++    QMAKE_USE += libdl
++} else {
++    DEFINES += SQLITE_OMIT_LOAD_EXTENSION
++}
+ integrity: QMAKE_CFLAGS += -include qplatformdefs.h
+ INCLUDEPATH +=  $$PWD/sqlite
+ SOURCES +=      $$PWD/sqlite/sqlite3.c
+-- 
+2.42.0
+
