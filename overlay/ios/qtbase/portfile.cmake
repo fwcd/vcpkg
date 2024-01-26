@@ -157,6 +157,7 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_GUI_OPTIONS
     "xrender"             FEATURE_xrender # requires FEATURE_xcb_native_painting; otherwise disabled. 
     "xrender"             FEATURE_xcb_native_painting # experimental
     "gles2"               FEATURE_opengles2
+    "gles3"               FEATURE_opengles3
     #"vulkan"              CMAKE_REQUIRE_FIND_PACKAGE_Vulkan
     "egl"                 FEATURE_egl
     #"fontconfig"          CMAKE_REQUIRE_FIND_PACKAGE_Fontconfig
@@ -190,10 +191,13 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_GUI_OPTIONS
 
 if( "gles2" IN_LIST FEATURES)
     list(APPEND FEATURE_GUI_OPTIONS -DINPUT_opengl='es2')
+endif()
+
+if("gles2" IN_LIST FEATURES OR "gles3" IN_LIST FEATURES)
     list(APPEND FEATURE_GUI_OPTIONS -DFEATURE_opengl_desktop=OFF)
 endif()
 
-if(NOT "opengl" IN_LIST FEATURES AND NOT "gles2" IN_LIST FEATURES)
+if(NOT "opengl" IN_LIST FEATURES AND NOT "gles2" IN_LIST FEATURES AND NOT "gles3" IN_LIST FEATURES)
     list(APPEND FEATURE_GUI_OPTIONS -DINPUT_opengl='no')
     list(APPEND FEATURE_GUI_OPTIONS -DFEATURE_opengl_desktop=OFF)
     list(APPEND FEATURE_GUI_OPTIONS -DFEATURE_opengl_dynamic=OFF)
@@ -210,8 +214,7 @@ else()
     list(APPEND FEATURE_GUI_OPTIONS -DINPUT_xkbcommon=no)
 endif()
 
-# Disable GLES3
-list(APPEND FEATURE_GUI_OPTIONS -DFEATURE_opengles3:BOOL=OFF)
+# Disable GLES3.1 and 3.2
 list(APPEND FEATURE_GUI_OPTIONS -DFEATURE_opengles31:BOOL=OFF)
 list(APPEND FEATURE_GUI_OPTIONS -DFEATURE_opengles32:BOOL=OFF)
 
