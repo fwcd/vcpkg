@@ -1,5 +1,5 @@
 diff --git a/src/portmidi/mac/readbinaryplist.c b/src/portmidi/mac/readbinaryplist.c
-index bccd095..ac1523d 100644
+index bccd095..1c9d792 100644
 --- a/src/portmidi/mac/readbinaryplist.c
 +++ b/src/portmidi/mac/readbinaryplist.c
 @@ -75,10 +75,10 @@ memory requested or calls longjmp, so callers don't have to check.
@@ -14,15 +14,16 @@ index bccd095..ac1523d 100644
  
  #define NO 0
  #define YES 1
-@@ -204,7 +204,6 @@ typedef struct bplist_info
+@@ -204,7 +204,7 @@ typedef struct bplist_info
  
  
  static value_ptr bplist_read_pldata(pldata_ptr data);
 -static value_ptr bplist_read_pref(char *filename, OSType folder_type);
++static value_ptr bplist_read_pref(char *filename, unsigned int folder_type);
  static uint64_t read_sized_int(bplist_info_ptr bplist, uint64_t offset, uint8_t size);
  static uint64_t read_offset(bplist_info_ptr bplist, uint64_t index);
  static BOOL read_self_sized_int(bplist_info_ptr bplist, uint64_t offset, uint64_t *outValue, size_t *outSize);
-@@ -378,38 +377,6 @@ value_ptr bplist_read_file(char *filename)
+@@ -378,35 +378,21 @@ value_ptr bplist_read_file(char *filename)
  }
  
  
@@ -45,22 +46,26 @@ index bccd095..ac1523d 100644
 -    strlcat(cstr, "/", MAXPATHLEN);
 -    strlcat(cstr, filename, MAXPATHLEN);
 -    return bplist_read_file(cstr);
--}
--
--
--value_ptr bplist_read_system_pref(char *filename) {
++value_ptr bplist_read_pref(char *filename, unsigned int folder_type) {
++    bplist_log("bplist_read_pref is unsupported in this build without Carbon!\n");
++    return NULL;
+ }
+ 
+ 
+ value_ptr bplist_read_system_pref(char *filename) {
 -    return bplist_read_pref(filename, kSystemPreferencesFolderType);
--}
--
--
--value_ptr bplist_read_user_pref(char *filename) {
++    bplist_log("bplist_read_system_pref is unsupported in this build without Carbon!\n");
++    return NULL;
+ }
+ 
+ 
+ value_ptr bplist_read_user_pref(char *filename) {
 -    return bplist_read_pref(filename, kPreferencesFolderType);
--}
--
--
- // data is stored with high-order bytes first.
- // read from plist data in a machine-independent fashion
- //
++    bplist_log("bplist_read_eser_pref is unsupported in this build without Carbon!\n");
++    return NULL;
+ }
+ 
+ 
 -- 
-2.35.1
+2.43.0
 
