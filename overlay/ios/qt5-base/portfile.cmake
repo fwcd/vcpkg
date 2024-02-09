@@ -44,12 +44,14 @@ qt_download_submodule(  OUT_SOURCE_PATH SOURCE_PATH
                     )
 
 # Remove vendored dependencies to ensure they are not picked up by the build
-foreach(DEPENDENCY freetype libjpeg libpng double-conversion sqlite pcre2)
-    if(EXISTS ${SOURCE_PATH}/src/3rdparty/${DEPENDENCY})
-        file(REMOVE_RECURSE ${SOURCE_PATH}/src/3rdparty/${DEPENDENCY})
-    endif()
-endforeach()
-file(REMOVE_RECURSE ${SOURCE_PATH}/include/QtZlib)
+if(NOT VCPKG_TARGET_IS_IOS)
+    foreach(DEPENDENCY freetype libjpeg libpng double-conversion sqlite pcre2)
+        if(EXISTS ${SOURCE_PATH}/src/3rdparty/${DEPENDENCY})
+            file(REMOVE_RECURSE ${SOURCE_PATH}/src/3rdparty/${DEPENDENCY})
+        endif()
+    endforeach()
+    file(REMOVE_RECURSE ${SOURCE_PATH}/include/QtZlib)
+endif()
 
 #########################
 ## Setup Configure options
