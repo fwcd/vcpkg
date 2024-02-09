@@ -1,0 +1,21 @@
+From d3a3c32b90196175d638dd59fd1e496c63ec9f23 Mon Sep 17 00:00:00 2001
+Date: Fri, 9 Feb 2024 21:55:59 +0100
+Subject: [PATCH] Fix Python script shebang
+
+---
+ mkspecs/features/uikit/devices.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mkspecs/features/uikit/devices.py b/mkspecs/features/uikit/devices.py
+index 8cdcb370..5f2bd5df 100755
+--- a/mkspecs/features/uikit/devices.py
++++ b/mkspecs/features/uikit/devices.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/usr/bin/env python3
+ 
+ #############################################################################
+ ##
+-- 
+2.43.0
+
