@@ -70,16 +70,18 @@ set(CORE_OPTIONS
 )
 
 ## 3rd Party Libs
-list(APPEND CORE_OPTIONS
-    -system-zlib
-    -system-libjpeg
-    -system-libpng
-    -system-freetype # static builds require to also link its dependent bzip!
-    -system-pcre
-    -system-doubleconversion
-    -system-sqlite)
+if(NOT VCPKG_TARGET_IS_IOS)
+    list(APPEND CORE_OPTIONS
+        -system-zlib
+        -system-libjpeg
+        -system-libpng
+        -system-freetype # static builds require to also link its dependent bzip!
+        -system-pcre
+        -system-doubleconversion
+        -system-sqlite)
+endif()
     
-if(VCPKG_TARGET_IS_OSX)
+if(VCPKG_TARGET_IS_OSX OR VCPKG_TARGET_IS_IOS)
     list(APPEND CORE_OPTIONS -qt-harfbuzz)
 else()
     file(REMOVE_RECURSE ${SOURCE_PATH}/src/3rdparty/harfbuzz-ng)
