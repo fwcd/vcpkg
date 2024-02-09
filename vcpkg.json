@@ -15,7 +15,10 @@
         "qt5-script",
         "qt5-svg",
         "qt5-translations",
-        "qtkeychain"
+        {
+          "name": "qtkeychain",
+          "platform": "!ios"
+        }
       ]
     },
     "qt6": {
