@@ -15,7 +15,7 @@ function(qt_fix_makefile_install BUILD_DIR)
     file(TO_NATIVE_PATH "${CURRENT_INSTALLED_DIR}" NATIVE_INSTALLED_DIR)
     file(TO_NATIVE_PATH "${CURRENT_PACKAGES_DIR}" NATIVE_PACKAGES_DIR)
     
-    file(GLOB_RECURSE MAKEFILES "${BUILD_DIR}/*Makefile*")
+    file(GLOB_RECURSE MAKEFILES "${BUILD_DIR}/*Makefile")
 
     foreach(MAKEFILE ${MAKEFILES})
         file(READ "${MAKEFILE}" _contents)
