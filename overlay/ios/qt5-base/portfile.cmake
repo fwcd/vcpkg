@@ -185,7 +185,7 @@ elseif(VCPKG_TARGET_IS_LINUX)
         FILE(WRITE "${SOURCE_PATH}/mkspecs/linux-arm-gnueabihf-g++/qmake.conf" "${_tmp_contents}")
         list(APPEND CORE_OPTIONS -no-opengl)
     endif()       
-elseif(VCPKG_TARGET_IS_OSX)
+elseif(VCPKG_HOST_IS_OSX OR VCPKG_TARGET_IS_OSX)
     if(NOT DEFINED VCPKG_OSX_DEPLOYMENT_TARGET)
         execute_process(COMMAND xcrun --show-sdk-version
                             OUTPUT_FILE OSX_SDK_VER.txt
@@ -201,7 +201,7 @@ elseif(VCPKG_TARGET_IS_OSX)
         endif()
     endif()
 
-    if("${TARGET_MKSPEC}" STREQUAL "macx-aarch64-clang")
+    if("${HOST_MKSPEC}" STREQUAL "macx-aarch64-clang" OR "${TARGET_MKSPEC}" STREQUAL "macx-aarch64-clang")
         file(COPY "${SOURCE_PATH}/mkspecs/macx-clang/" DESTINATION "${SOURCE_PATH}/mkspecs/macx-aarch64-clang")
         FILE(READ "${SOURCE_PATH}/mkspecs/macx-aarch64-clang/qmake.conf" _tmp_contents)
             string(REPLACE 
