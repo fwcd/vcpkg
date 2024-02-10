@@ -24,6 +24,10 @@ function(qt_configure_qmake)
         vcpkg_list(APPEND arg_OPTIONS "CONFIG*=static-runtime")
     endif()
 
+    if(VCPKG_TARGET_IS_IOS)
+        vcpkg_list(APPEND arg_OPTIONS "CONFIG-=build_all")
+    endif()
+
     if(DEFINED VCPKG_OSX_DEPLOYMENT_TARGET)
         set(ENV{QMAKE_MACOSX_DEPLOYMENT_TARGET} ${VCPKG_OSX_DEPLOYMENT_TARGET})
     endif()
