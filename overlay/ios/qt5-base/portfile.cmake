@@ -42,6 +42,7 @@ qt_download_submodule(  OUT_SOURCE_PATH SOURCE_PATH
                             patches/qmake_xcode15.patch # Fix Xcode 15 (macOS 14 Sonoma) build, see https://github.com/Homebrew/homebrew-core/pull/145729
                             patches/ios_iokit_qglobal.patch # Exclude IOKit-specifics from QGlobal on iOS (IOKit is iOS 16+ and this older Qt likely assumed it was still macOS-only)
                             patches/ios_fix_python_shebang.patch # Use /usr/bin/env instead of hardcoding /usr/bin/python in one of the scripts
+                            patches/ios_disable_build_all.patch # Disable the build_all configuration flag on iOS to avoid having the CMake configuration reference missing debug libraries
                     )
 
 # Remove vendored dependencies to ensure they are not picked up by the build

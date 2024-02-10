@@ -1,0 +1,24 @@
+From 05bead7039d2183f9fe7b9129ae8a03479927995 Mon Sep 17 00:00:00 2001
+Date: Sat, 10 Feb 2024 18:37:41 +0100
+Subject: [PATCH] Disable build_all configuration when building for iOS
+
+---
+ configure.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.json b/configure.json
+index 72792594..c1924eb5 100644
+--- a/configure.json
++++ b/configure.json
+@@ -720,7 +720,7 @@
+             "output": [ "publicFeature", "publicQtConfig" ]
+         },
+         "build_all": {
+-            "condition": "features.debug_and_release || features.simulator_and_device",
++            "condition": "features.debug_and_release",
+             "output": [ "publicFeature", "publicQtConfig" ]
+         },
+         "rpath": {
+-- 
+2.43.0
+
