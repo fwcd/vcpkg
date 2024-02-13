@@ -291,6 +291,16 @@ file(MAKE_DIRECTORY ${CURRENT_PACKAGES_DIR}/share)
 file(RENAME ${CURRENT_PACKAGES_DIR}/lib/cmake ${CURRENT_PACKAGES_DIR}/share/cmake)
 file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/lib/cmake) # TODO: check if important debug information for cmake is lost 
 
+# For some reason, Qt5Gui_QIOSIntegrationPlugin.cmake ends up in the installed
+# tree and not in the package tree after installation
+file(GLOB EXTRA_CMAKE_FILES "${CURRENT_INSTALLED_DIR}/lib/cmake/Qt5*/**")
+foreach(EXTRA_CMAKE_FILE "${EXTRA_CMAKE_FILES}")
+    get_filename_component(EXTRA_CMAKE_NAME "${EXTRA_CMAKE_FILE}" NAME)
+    message(WARNING "Found ${EXTRA_CMAKE_FILE} in installed tree under lib/cmake, not sure what's going on, moving it to share/cmake...")
+    file(MAKE_DIRECTORY "${CURRENT_INSTALLED_DIR}/share/cmake")
+    file(RENAME "${EXTRA_CMAKE_FILE}" "${CURRENT_INSTALLED_DIR}/share/cmake/${EXTRA_CMAKE_NAME}")
+endforeach()
+
 #This needs a new VCPKG policy. 
 if(VCPKG_TARGET_IS_WINDOWS AND ${VCPKG_LIBRARY_LINKAGE} MATCHES "static") # Move angle dll libraries 
     message(STATUS "Moving ANGLE dlls from /bin to /tools/qt5-angle/bin. In static builds dlls are not allowed in /bin")
