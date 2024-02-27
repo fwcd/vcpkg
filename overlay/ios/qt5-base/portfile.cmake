@@ -295,10 +295,11 @@ file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/lib/cmake) # TODO: check if im
 # tree and not in the package tree after installation
 file(GLOB EXTRA_CMAKE_FILES "${CURRENT_INSTALLED_DIR}/lib/cmake/Qt5*/**")
 foreach(EXTRA_CMAKE_FILE "${EXTRA_CMAKE_FILES}")
-    get_filename_component(EXTRA_CMAKE_NAME "${EXTRA_CMAKE_FILE}" NAME)
     message(WARNING "Found ${EXTRA_CMAKE_FILE} in installed tree under lib/cmake, not sure what's going on, moving it to share/cmake...")
-    file(MAKE_DIRECTORY "${CURRENT_INSTALLED_DIR}/share/cmake")
-    file(RENAME "${EXTRA_CMAKE_FILE}" "${CURRENT_INSTALLED_DIR}/share/cmake/${EXTRA_CMAKE_NAME}")
+    string(REGEX REPLACE "^${CURRENT_INSTALLED_DIR}/lib/cmake" "${CURRENT_INSTALLED_DIR}/share/cmake" EXTRA_CMAKE_FILE_TARGET "${EXTRA_CMAKE_FILE}")
+    get_filename_component(EXTRA_CMAKE_FILE_TARGET_DIR "${EXTRA_CMAKE_FILE_TARGET}" DIRECTORY)
+    file(MAKE_DIRECTORY "${EXTRA_CMAKE_FILE_TARGET_DIR}")
+    file(RENAME "${EXTRA_CMAKE_FILE}" "${EXTRA_CMAKE_FILE_TARGET}")
 endforeach()
 
 #This needs a new VCPKG policy. 
