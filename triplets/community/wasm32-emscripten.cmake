@@ -1,7 +1,24 @@
 set(VCPKG_ENV_PASSTHROUGH_UNTRACKED EMSCRIPTEN_ROOT EMSDK PATH)
 
 if(NOT DEFINED ENV{EMSCRIPTEN_ROOT})
-   find_path(EMSCRIPTEN_ROOT "emcc")
+   # Try locating the emscripten SDK root relative to the (resolved) emcc binary
+
+   find_program(EMCC_PATH "emcc")
+   get_filename_component(EMCC_REALPATH "${EMCC_PATH}" REALPATH)
+   get_filename_component(EMCC_DIRECTORY "${EMCC_REALPATH}" DIRECTORY)
+
+   set(EMSCRIPTEN_ROOT_RELATIVE_PATHS
+      .          # Linux
+      ../libexec # macOS/Homebrew
+   )
+
+   foreach(RELATIVE_PATH ${EMSCRIPTEN_ROOT_RELATIVE_PATHS})
+      get_filename_component(CANDIDATE "${EMCC_DIRECTORY}/${RELATIVE_PATH}" REALPATH)
+      if(EXISTS "${CANDIDATE}/cmake" AND IS_DIRECTORY "${CANDIDATE}/cmake")
+         set(EMSCRIPTEN_ROOT "${CANDIDATE}")
+         break()
+      endif()
+   endforeach()
 else()
    set(EMSCRIPTEN_ROOT "$ENV{EMSCRIPTEN_ROOT}")
 endif()
