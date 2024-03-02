@@ -19,6 +19,10 @@
     "asm": {
       "description": "Use any assembly optimization routines",
       "supports": "x86"
+    },
+    "stack-protector": {
+      "description": "Build with stack smashing protection",
+      "supports": "!emscripten"
     }
   }
 }
