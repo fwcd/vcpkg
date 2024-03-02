@@ -22,7 +22,40 @@
       "description": "Build with Qt 6",
       "dependencies": [
         "qt5compat",
-        "qtbase",
+        {
+          "name": "qtbase",
+          "default-features": false,
+          "features": [
+            "brotli",
+            "concurrent",
+            "dbus",
+            "default-features",
+            "doubleconversion",
+            "freetype",
+            "gui",
+            "harfbuzz",
+            "icu",
+            "jpeg",
+            "network",
+            "opengl",
+            {
+              "name": "openssl",
+              "platform": "!ios & !emscripten"
+            },
+            "pcre2",
+            "png",
+            "sql",
+            {
+              "name": "sql-psql",
+              "platform": "!ios & !emscripten"
+            },
+            "sql-sqlite",
+            "testlib",
+            "thread",
+            "widgets",
+            "zstd"
+          ]
+        },
         "qtdeclarative",
         "qtsvg",
         "qttranslations",
