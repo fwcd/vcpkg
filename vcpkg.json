@@ -66,7 +66,10 @@
         "qtdeclarative",
         "qtsvg",
         "qttranslations",
-        "qtkeychain-qt6"
+        {
+          "name": "qtkeychain-qt6",
+          "platform": "!emscripten"
+        }
       ]
     }
   },
