@@ -42,6 +42,10 @@
             "network",
             "opengl",
             {
+              "name": "gles3",
+              "platform": "ios | emscripten"
+            },
+            {
               "name": "openssl",
               "platform": "!ios & !emscripten"
             },
