@@ -33,9 +33,15 @@
   "dependencies": [
     "ableton-link",
     "benchmark",
-    "chromaprint",
+    {
+      "name": "chromaprint",
+      "platform": "!emscripten"
+    },
     "fdk-aac",
-    "ffmpeg",
+    {
+      "name": "ffmpeg",
+      "platform": "!emscripten"
+    },
     "fftw3",
     "grantlee",
     "gtest",
