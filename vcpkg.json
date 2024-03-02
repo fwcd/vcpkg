@@ -126,7 +126,11 @@
       "name": "portaudio",
       "features": ["asio"]
     },
-    "portmidi",
+    {
+      "name": "portmidi",
+      "$comment": "TODO: Depends on https://github.com/PortMidi/portmidi/issues/68 (alternatively libremidi might be an option)",
+      "platform": "!emscripten"
+    },
     "protobuf",
     "pthreads",
     "rubberband",
