@@ -85,7 +85,10 @@
     "fftw3",
     "grantlee",
     "gtest",
-    "hidapi",
+    {
+      "name": "hidapi",
+      "platform": "!emscripten"
+    },
     {
       "name": "hss1394",
       "platform": "windows | osx"
@@ -109,7 +112,10 @@
       "name": "libsndfile",
       "default-features": false
     },
-    "libusb",
+    {
+      "name": "libusb",
+      "platform": "!emscripten"
+    },
     "libvorbis",    
     "lilv",
     "mp3lame",
