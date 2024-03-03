@@ -65,7 +65,11 @@
         },
         "qtdeclarative",
         "qtsvg",
-        "qttranslations",
+        {
+          "name": "qttranslations",
+          "$comment": "TODO: We most likely need this, but will have to figure out the issue with qttools",
+          "platform": "!emscripten"
+        },
         {
           "name": "qtkeychain-qt6",
           "platform": "!emscripten"
