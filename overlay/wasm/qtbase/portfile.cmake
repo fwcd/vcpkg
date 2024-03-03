@@ -20,6 +20,7 @@ set(${PORT}_PATCHES
         clang-cl_source_location.patch
         clang-cl_QGADGET_fix.diff
         CVE-2023-43114-6.5.patch
+        include-public-wasm-toolchain-helpers.patch
         )
 
 if(VCPKG_TARGET_IS_WINDOWS AND NOT VCPKG_TARGET_IS_MINGW)
