@@ -12,6 +12,7 @@
     {
       "name": "qttools",
       "default-features": false,
+      "host": true,
       "features": [
         "linguist"
       ]
