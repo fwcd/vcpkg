@@ -1,0 +1,23 @@
+From da4c286c40e23629a0b6a9cd80f39ca41a3d49dc Mon Sep 17 00:00:00 2001
+Date: Mon, 4 Mar 2024 04:29:25 +0100
+Subject: [PATCH] Remove Emscripten version test
+
+---
+ src/corelib/Qt6WasmMacros.cmake | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/corelib/Qt6WasmMacros.cmake b/src/corelib/Qt6WasmMacros.cmake
+index 5cb8b73a..6d1e8567 100644
+--- a/src/corelib/Qt6WasmMacros.cmake
++++ b/src/corelib/Qt6WasmMacros.cmake
+@@ -4,7 +4,6 @@
+ # Copy in Qt HTML/JS launch files for apps.
+ function(_qt_internal_wasm_add_target_helpers target)
+ 
+-    _qt_test_emscripten_version()
+     get_target_property(targetType "${target}" TYPE)
+     if("${targetType}" STREQUAL "EXECUTABLE")
+ 
+-- 
+2.43.0
+

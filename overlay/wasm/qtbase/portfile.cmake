@@ -21,6 +21,10 @@ set(${PORT}_PATCHES
         clang-cl_QGADGET_fix.diff
         CVE-2023-43114-6.5.patch
         include-public-wasm-toolchain-helpers.patch
+        # There seems to be an include missing here causing this to error while
+        # configuring Mixxx. Since we don't need this version check anyway, we
+        # just patch it out for now.
+        remove-emscripten-version-test.patch
         )
 
 if(VCPKG_TARGET_IS_WINDOWS AND NOT VCPKG_TARGET_IS_MINGW)
