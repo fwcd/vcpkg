@@ -23,6 +23,6 @@ set(VCPKG_LIBRARY_LINKAGE static)
 set(VCPKG_CMAKE_SYSTEM_NAME Emscripten)
 set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "${EMSCRIPTEN_ROOT}/cmake/Modules/Platform/Emscripten.cmake")
 
-set(ENV{EMCC_CFLAGS} "-pthread")
+set(ENV{EMCC_CFLAGS} "$ENV{EMCC_CFLAGS} -pthread")
 
 set(VCPKG_BUILD_TYPE release)
