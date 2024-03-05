@@ -7,6 +7,9 @@ vcpkg_from_github(
         "0001-Add-basic-support-for-iOS-to-portaudio.patch"
         "0002-Update-CMakeLists-with-iOS-implementation.patch"
         "0003-Fix-renamed-memory-allocation-functions.patch"
+        "0004-Add-webaudio-hostapi.patch"
+        "0005-Migrate-renamed-memory-allocation-functions.patch"
+        "0006-Rename-WebAudio-Web-Audio.patch"
 )
 
 string(COMPARE EQUAL ${VCPKG_LIBRARY_LINKAGE} dynamic PA_BUILD_SHARED)

@@ -1,0 +1,24 @@
+From f4a282c5873171fef9b3cf8012f24f80439ce17a Mon Sep 17 00:00:00 2001
+Date: Tue, 5 Mar 2024 06:01:38 +0100
+Subject: [PATCH 3/3] Rename WebAudio -> Web Audio
+
+---
+ src/hostapi/webaudio/pa_webaudio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/hostapi/webaudio/pa_webaudio.c b/src/hostapi/webaudio/pa_webaudio.c
+index a08e9e7..641c6be 100644
+--- a/src/hostapi/webaudio/pa_webaudio.c
++++ b/src/hostapi/webaudio/pa_webaudio.c
+@@ -150,7 +150,7 @@ PaError PaWebAudio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiI
+     *hostApi = &webAudioHostApi->inheritedHostApiRep;
+     (*hostApi)->info.structVersion = 1;
+     (*hostApi)->info.type = paInDevelopment;            /* IMPLEMENT ME: change to correct type id */
+-    (*hostApi)->info.name = "WebAudio";
++    (*hostApi)->info.name = "Web Audio";
+ 
+     (*hostApi)->info.defaultInputDevice = 0;
+     (*hostApi)->info.defaultOutputDevice = 0;
+-- 
+2.43.0
+
