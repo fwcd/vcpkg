@@ -26,6 +26,10 @@
           "name": "qtbase",
           "default-features": false,
           "features": [
+            {
+              "name": "asyncify",
+              "platform": "emscripten"
+            },
             "brotli",
             "concurrent",
             {
