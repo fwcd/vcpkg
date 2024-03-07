@@ -78,6 +78,10 @@
     "appstore-compliant": {
       "description": "Disable code that is not allowed in platform app stores. This is on by default for platforms which require distribution through an app store by default, in particular Android, iOS, tvOS, and watchOS."
     },
+    "asyncify": {
+      "description": "Use Emscripten's asyncify",
+      "supports": "emscripten"
+    },
     "brotli": {
       "description": "Support for downloading and decompressing resources compressed with Brotli through QNetworkAccessManager.",
       "dependencies": [
