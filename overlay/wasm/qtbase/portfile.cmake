@@ -24,6 +24,7 @@ set(${PORT}_PATCHES
         fix-host-aliasing.patch
         wasm-patches/remove-emscripten-version-test.patch
         wasm-patches/disable-clipboard-api.patch
+        wasm-patches/disable-permission-checks.patch
         )
 
 if(VCPKG_TARGET_IS_WINDOWS AND NOT VCPKG_TARGET_IS_MINGW)

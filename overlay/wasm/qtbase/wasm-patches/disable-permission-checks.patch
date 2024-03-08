@@ -1,0 +1,23 @@
+From 8548711fd8790d4a8a692a3b5d16160dcc6cc8be Mon Sep 17 00:00:00 2001
+Date: Fri, 8 Mar 2024 03:05:26 +0100
+Subject: [PATCH] Disable camera/mic/geolocation permission check
+
+---
+ src/corelib/kernel/qpermissions_wasm.cpp | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/corelib/kernel/qpermissions_wasm.cpp b/src/corelib/kernel/qpermissions_wasm.cpp
+index 7e885a43..7332845d 100644
+--- a/src/corelib/kernel/qpermissions_wasm.cpp
++++ b/src/corelib/kernel/qpermissions_wasm.cpp
+@@ -71,7 +71,6 @@ namespace
+ 
+     void bootstrapCheckPermissions()
+     {
+-        QTimer::singleShot(0, []{checkPermissions();});
+     }
+ 
+     Q_CONSTRUCTOR_FUNCTION(bootstrapCheckPermissions);
+-- 
+2.43.0
+
