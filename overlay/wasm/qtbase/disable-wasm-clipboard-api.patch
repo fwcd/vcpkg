@@ -1,0 +1,30 @@
+From b3b825ff12c0670a67ccc49aee919622fdceba46 Mon Sep 17 00:00:00 2001
+Date: Fri, 8 Mar 2024 02:28:29 +0100
+Subject: [PATCH] Disable WASM clipboard API
+
+---
+ src/plugins/platforms/wasm/qwasmclipboard.cpp | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/src/plugins/platforms/wasm/qwasmclipboard.cpp b/src/plugins/platforms/wasm/qwasmclipboard.cpp
+index 8916a946..489a552c 100644
+--- a/src/plugins/platforms/wasm/qwasmclipboard.cpp
++++ b/src/plugins/platforms/wasm/qwasmclipboard.cpp
+@@ -99,13 +99,7 @@ EMSCRIPTEN_BINDINGS(qtClipboardModule) {
+ 
+ QWasmClipboard::QWasmClipboard()
+ {
+-    val clipboard = val::global("navigator")["clipboard"];
+-
+-    const bool hasPermissionsApi = !val::global("navigator")["permissions"].isUndefined();
+-    m_hasClipboardApi = !clipboard.isUndefined() && !clipboard["readText"].isUndefined();
+-
+-    if (m_hasClipboardApi && hasPermissionsApi)
+-        initClipboardPermissions();
++    m_hasClipboardApi = false;
+ }
+ 
+ QWasmClipboard::~QWasmClipboard()
+-- 
+2.43.0
+
