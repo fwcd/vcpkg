@@ -142,6 +142,10 @@
           "platform": "!emscripten"
         },
         {
+          "name": "asyncify",
+          "platform": "emscripten"
+        },
+        {
           "name": "jack",
           "platform": "!emscripten"
         }
