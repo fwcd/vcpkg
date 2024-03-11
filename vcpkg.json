@@ -135,7 +135,17 @@
     "opusfile",
     {
       "name": "portaudio",
-      "features": ["asio"]
+      "default-features": false,
+      "features": [
+        {
+          "name": "asio",
+          "platform": "!emscripten"
+        },
+        {
+          "name": "jack",
+          "platform": "!emscripten"
+        }
+      ]
     },
     {
       "name": "portmidi",

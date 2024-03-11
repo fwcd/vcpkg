@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 218ba7c..4f6ff13 100644
+index 218ba7c..3dc840b 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -355,6 +355,31 @@ elseif(UNIX)
+@@ -355,6 +355,38 @@ elseif(UNIX)
        target_compile_definitions(PortAudio PUBLIC PA_USE_AUDIOIO=1)
        set(PKGCONFIG_CFLAGS "${PKGCONFIG_CFLAGS} -DPA_USE_AUDIOIO=1")
      endif()
@@ -17,12 +17,19 @@ index 218ba7c..4f6ff13 100644
 +        target_compile_definitions(PortAudio PUBLIC PA_USE_WEBAUDIO=1)
 +        target_compile_options(PortAudio PUBLIC -pthread)
 +        target_link_options(PortAudio PUBLIC
-+          -sASYNCIFY
-+          -sASYNCIFY_IMPORTS=emscripten_asm_const_int
 +          -sAUDIO_WORKLET
 +          -sWASM_WORKERS
 +          -sEXPORTED_RUNTIME_METHODS=emscriptenGetAudioObject
 +        )
++
++        option(PA_WEBAUDIO_ASYNCIFY "Build with -sASYNCIFY and use async operations. Recommended when intending to call PortAudio from the main thread to avoid blocking." ON)
++        if(PA_WEBAUDIO_ASYNCIFY)
++          target_compile_definitions(PortAudio PUBLIC PA_WEBAUDIO_ASYNCIFY=1)
++          target_link_options(PortAudio PUBLIC
++            -sASYNCIFY
++            -sASYNCIFY_IMPORTS=emscripten_asm_const_int
++          )
++        endif()
 +        set(PKGCONFIG_CFLAGS "${PKGCONFIG_CFLAGS} -DPA_USE_WEBAUDIO=1")
 +      endif()
 +
@@ -34,12 +41,38 @@ index 218ba7c..4f6ff13 100644
    endif()
  endif()
  
+diff --git a/examples/CMakeLists.txt b/examples/CMakeLists.txt
+index eca4beb..bbbb11f 100644
+--- a/examples/CMakeLists.txt
++++ b/examples/CMakeLists.txt
+@@ -10,6 +10,10 @@ macro(add_example appl_name)
+   if(WIN32)
+     set_property(TARGET ${appl_name} APPEND_STRING PROPERTY COMPILE_DEFINITIONS _CRT_SECURE_NO_WARNINGS)
+   endif()
++  if(EMSCRIPTEN AND NOT PA_WEBAUDIO_ASYNCIFY)
++    target_compile_options(${appl_name} PUBLIC -pthread)
++    target_link_options(${appl_name} PUBLIC -pthread -sPROXY_TO_PTHREAD)
++  endif()
+ endmacro()
+ 
+ macro(add_example_cpp appl_name)
+@@ -19,6 +23,10 @@ macro(add_example_cpp appl_name)
+   if(WIN32)
+     set_property(TARGET ${appl_name} APPEND_STRING PROPERTY COMPILE_DEFINITIONS _CRT_SECURE_NO_WARNINGS)
+   endif()
++  if(EMSCRIPTEN AND NOT PA_WEBAUDIO_ASYNCIFY)
++    target_compile_options(${appl_name} PUBLIC -pthread)
++    target_link_options(${appl_name} PUBLIC -pthread -sPROXY_TO_PTHREAD)
++  endif()
+ endmacro()
+ 
+ add_example(pa_devs)
 diff --git a/src/hostapi/webaudio/README.md b/src/hostapi/webaudio/README.md
 new file mode 100644
-index 0000000..8a3c9ab
+index 0000000..035a72d
 --- /dev/null
 +++ b/src/hostapi/webaudio/README.md
-@@ -0,0 +1,30 @@
+@@ -0,0 +1,33 @@
 +# Web Audio API
 +
 +To build PortAudio for the web, make sure to have [the Emscripten SDK](https://emscripten.org/docs/getting_started/downloads.html) installed and on your `PATH`, then run from the repository's top-level directory:
@@ -57,6 +90,9 @@ index 0000000..8a3c9ab
 +```
 +
 +> [!TIP]
++> By default PortAudio will be built with `-sASYNCIFY`. This makes it safe to be called from the main thread, but also introduces overhead and potentially other issues when the application already uses other asynchronous operations. PortAudio can also be built without Asyncify (i.e. using synchronous/blocking operations) by setting `-DPA_WEBAUDIO_ASYNCIFY=OFF`, in that case it is recommended to call PortAudio from a worker thread to avoid blocking the main thread (which may result in locking up the UI or in worse cases deadlock the application, e.g. if PortAudio waits for user interaction, as it does during `Pa_StartStream`). This can be done automatically using `-sPROXY_TO_PTHREAD`.
++
++> [!TIP]
 +> For debug logging, set `-DPA_ENABLE_DEBUG_OUTPUT=ON`
 +
 +You can now run the examples in a local browser using `emrun`, for example
@@ -72,10 +108,10 @@ index 0000000..8a3c9ab
 +> You can customize the browser e.g. by setting `--browser=firefox` and also pass arguments to the browser with `--browser-args`
 diff --git a/src/hostapi/webaudio/pa_webaudio.c b/src/hostapi/webaudio/pa_webaudio.c
 new file mode 100644
-index 0000000..ff34320
+index 0000000..d316d38
 --- /dev/null
 +++ b/src/hostapi/webaudio/pa_webaudio.c
-@@ -0,0 +1,915 @@
+@@ -0,0 +1,946 @@
 +/*
 + * Portable Audio I/O Library Web Audio implementation
 + * Copyright (c) 2024 fwcd
@@ -122,6 +158,7 @@ index 0000000..ff34320
 +
 +
 +#include <assert.h>
++#include <emscripten/threading.h>
 +#include <emscripten/webaudio.h>
 +#include <string.h> /* strlen() */
 +#include <stdint.h>
@@ -796,12 +833,31 @@ index 0000000..ff34320
 +
 +void WebAudioSuspendContextSync( EMSCRIPTEN_WEBAUDIO_T context )
 +{
++#ifdef PA_WEBAUDIO_ASYNCIFY
 +    EM_ASM({
 +        const context = emscriptenGetAudioObject($0);
 +        Asyncify.handleAsync(async () => {
 +            await context.suspend();
 +        });
 +    }, context);
++#else
++    EM_ASM({
++        const context = emscriptenGetAudioObject($0);
++        context.suspend();
++    }, context);
++
++    if ( emscripten_is_main_browser_thread() )
++    {
++        PA_DEBUG(("Warning: Not waiting for the context to suspend since we're on the main browser thread, this may result in inconsistent behavior!"));
++    }
++    else
++    {
++        while ( emscripten_audio_context_state( context ) != AUDIO_CONTEXT_STATE_SUSPENDED )
++        {
++            Pa_Sleep ( 100 );
++        }
++    }
++#endif
 +}
 +
 +
@@ -847,12 +903,23 @@ index 0000000..ff34320
 +        TODO: Find a more elegant solution
 +    */
 +
++#ifndef PA_WEBAUDIO_ASYNCIFY
++    if ( emscripten_is_main_browser_thread() )
++    {
++        PA_DEBUG(("Warning: Not waiting for the context to initialize in StartStream since we're on the main browser thread, this may result in inconsistent behavior!"));
++    }
++    else
++    {
++#endif
 +    while ( !IsStreamActive(stream) )
 +    {
 +        PA_DEBUG(("Audio context is not running yet, waiting for user interaction...\n"));
-+        emscripten_sleep( 500 );
++        Pa_Sleep( 500 );
 +        emscripten_resume_audio_context_sync( stream->context );
 +    }
++#ifndef PA_WEBAUDIO_ASYNCIFY
++    }
++#endif
 +
 +    return result;
 +}
@@ -1015,27 +1082,32 @@ index 74b7ade..1ffd8ec 100644
          PaSkeleton_Initialize,
  #endif
 diff --git a/src/os/unix/pa_unix_util.c b/src/os/unix/pa_unix_util.c
-index 5ad55e4..975f583 100644
+index 5ad55e4..ceb93dd 100644
 --- a/src/os/unix/pa_unix_util.c
 +++ b/src/os/unix/pa_unix_util.c
-@@ -51,6 +51,10 @@
+@@ -51,6 +51,11 @@
  #include <math.h>
  #include <errno.h>
  
 +#ifdef __EMSCRIPTEN__
 +#include <emscripten.h>
++#include <emscripten/threading.h>
 +#endif
 +
  #if defined(__APPLE__) && !defined(HAVE_MACH_ABSOLUTE_TIME)
  #define HAVE_MACH_ABSOLUTE_TIME
  #endif
-@@ -111,7 +115,9 @@ int PaUtil_CountCurrentlyAllocatedBlocks( void )
+@@ -111,7 +116,13 @@ int PaUtil_CountCurrentlyAllocatedBlocks( void )
  
  void Pa_Sleep( long msec )
  {
 -#ifdef HAVE_NANOSLEEP
 +#ifdef __EMSCRIPTEN__
++#ifdef PA_WEBAUDIO_ASYNCIFY
 +    emscripten_sleep(msec);
++#else
++    emscripten_thread_sleep(msec);
++#endif
 +#elif defined(HAVE_NANOSLEEP)
      struct timespec req = {0}, rem = {0};
      PaTime time = msec / 1.e3;
