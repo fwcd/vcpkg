@@ -35,16 +35,16 @@
             "default-features",
             "doubleconversion",
             "freetype",
+            {
+              "name": "gles3",
+              "platform": "ios"
+            },
             "gui",
             "harfbuzz",
             "icu",
             "jpeg",
             "network",
             "opengl",
-            {
-              "name": "gles3",
-              "platform": "ios"
-            },
             {
               "name": "openssl",
               "platform": "!ios"
