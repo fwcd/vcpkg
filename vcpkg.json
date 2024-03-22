@@ -39,16 +39,16 @@
             "default-features",
             "doubleconversion",
             "freetype",
+            {
+              "name": "gles3",
+              "platform": "ios | emscripten"
+            },
             "gui",
             "harfbuzz",
             "icu",
             "jpeg",
             "network",
             "opengl",
-            {
-              "name": "gles3",
-              "platform": "ios | emscripten"
-            },
             {
               "name": "openssl",
               "platform": "!ios & !emscripten"
