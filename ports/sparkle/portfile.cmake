@@ -11,20 +11,30 @@ foreach(_buildtype IN ITEMS "debug" "release")
         if("${_buildtype}" STREQUAL "debug")
             set(_xcode_configuration "Debug")
             set(_short_build_type "dbg")
+            set(_install_destdir "${CURRENT_PACKAGES_DIR}/debug")
         else()
             set(_xcode_configuration "Release")
             set(_short_build_type "rel")
+            set(_install_destdir "${CURRENT_PACKAGES_DIR}")
         endif()
+
+        set(_builddir "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-${_short_build_type}")
 
         message(STATUS "Building ${TARGET_TRIPLET}-${_short_build_type}")
         vcpkg_execute_build_process(
             COMMAND xcodebuild
                 -scheme Distribution
                 -configuration "${_xcode_configuration}"
-                -derivedDataPath "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-${_short_build_type}"
+                -derivedDataPath "${_builddir}"
                 build
             WORKING_DIRECTORY "${SOURCE_PATH}"
             LOGNAME "build-${TARGET_TRIPLET}-${_short_build_type}"
         )
     endif()
+
+    message(STATUS "Installing ${TARGET_TRIPLET}-${_short_build_type}")
+    file(
+        COPY "${_builddir}/Build/Products/${_xcode_configuration}/Sparkle.framework"
+        DESTINATION "${_install_destdir}/lib"
+    )
 endforeach()
