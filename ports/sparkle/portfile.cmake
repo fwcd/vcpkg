@@ -38,3 +38,5 @@ foreach(_buildtype IN ITEMS "debug" "release")
         DESTINATION "${_install_destdir}/lib"
     )
 endforeach()
+
+vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE")
