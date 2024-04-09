@@ -11,7 +11,7 @@ if(VCPKG_TARGET_ARCHITECTURE STREQUAL "x64")
 elseif(VCPKG_TARGET_ARCHITECTURE STREQUAL "arm64")
     set(_xcode_arch "arm64")
 else()
-    message(FATAL_ERROR "Unsupported architecture ${VCPKG_TARGET_ARCHITECTURE}!" )
+    message(FATAL_ERROR "Unsupported target architecture ${VCPKG_TARGET_ARCHITECTURE}!" )
 endif()
 
 foreach(_buildtype IN ITEMS "debug" "release")
