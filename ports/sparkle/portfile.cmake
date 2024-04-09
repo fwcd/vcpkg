@@ -6,10 +6,25 @@ vcpkg_from_github(
     HEAD_REF 2.x
 )
 
-vcpkg_configure_make(
-    SOURCE_PATH "${SOURCE_PATH}"
-    COPY_SOURCE
-    SKIP_CONFIGURE
-)
+foreach(_buildtype IN ITEMS "debug" "release")
+    if(NOT VCPKG_BUILD_TYPE OR VCPKG_BUILD_TYPE STREQUAL "${_buildtype}")
+        if("${_buildtype}" STREQUAL "debug")
+            set(_xcode_configuration "Debug")
+            set(_short_build_type "dbg")
+        else()
+            set(_xcode_configuration "Release")
+            set(_short_build_type "rel")
+        endif()
 
-vcpkg_build_make()
+        message(STATUS "Building ${TARGET_TRIPLET}-${_short_build_type}")
+        vcpkg_execute_build_process(
+            COMMAND xcodebuild
+                -scheme Distribution
+                -configuration "${_xcode_configuration}"
+                -derivedDataPath "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-${_short_build_type}"
+                build
+            WORKING_DIRECTORY "${SOURCE_PATH}"
+            LOGNAME "build-${TARGET_TRIPLET}-${_short_build_type}"
+        )
+    endif()
+endforeach()
