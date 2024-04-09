@@ -76,6 +76,10 @@
     "pthreads",
     "rubberband",
     "soundtouch",
+    {
+      "name": "sparkle",
+      "platform": "osx"
+    },
     "taglib",
     "wavpack"
   ]
