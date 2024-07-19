@@ -31,7 +31,10 @@
           "features": [
             "brotli",
             "concurrent",
-            "dbus",
+            {
+              "name": "dbus",
+              "platform": "!ios"
+            },
             "default-features",
             "doubleconversion",
             "freetype",
