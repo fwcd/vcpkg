@@ -10,12 +10,7 @@ function(vcpkg_configure_qmake)
     find_program(qmake_executable NAMES qmake PATHS "${CURRENT_HOST_INSTALLED_DIR}/tools/qt5/bin" NO_DEFAULT_PATH)
 
     if(NOT qmake_executable)
-        message(STATUS "vcpkg_configure_qmake: unable to find qmake at ${CURRENT_HOST_INSTALLED_DIR}/tools/qt5/bin")
-        message(STATUS "vcpkg_configure_qmake: trying to find qmake at ${CURRENT_INSTALLED_DIR}/tools/qt5/bin")
-        find_program(qmake_executable NAMES qmake PATHS "${CURRENT_INSTALLED_DIR}/tools/qt5/bin" NO_DEFAULT_PATH)
-        if(NOT qmake_executable)
-            message(FATAL_ERROR "vcpkg_configure_qmake: unable to find qmake.")
-        endif()
+        message(FATAL_ERROR "vcpkg_configure_qmake: unable to find qmake.")
     endif()
 
     z_vcpkg_get_cmake_vars(cmake_vars_file)
@@ -80,7 +75,7 @@ function(vcpkg_configure_qmake)
     endif()
 
     if(NOT DEFINED VCPKG_BUILD_TYPE OR VCPKG_BUILD_TYPE STREQUAL "release")
-        z_vcpkg_setup_pkgconfig_path(BASE_DIRS "${CURRENT_INSTALLED_DIR}" "${CURRENT_PACKAGES_DIR}")
+        z_vcpkg_setup_pkgconfig_path(CONFIG RELEASE)
 
         set(current_binary_dir "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel")
 
@@ -125,7 +120,7 @@ function(vcpkg_configure_qmake)
     endif()
 
     if(NOT DEFINED VCPKG_BUILD_TYPE OR VCPKG_BUILD_TYPE STREQUAL "debug")
-        z_vcpkg_setup_pkgconfig_path(BASE_DIRS "${CURRENT_INSTALLED_DIR}/debug" "${CURRENT_PACKAGES_DIR}/debug")
+        z_vcpkg_setup_pkgconfig_path(CONFIG DEBUG)
 
         set(current_binary_dir "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg")
 
